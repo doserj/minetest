@@ -790,6 +790,7 @@ void mapblock_mesh_generate_special(MeshMakeData *data,
 			u16 l = getInteriorLight(n, 1, data);
 			video::SColor c = MapBlock_LightColor(255, l, decode_light(f.light_source));
 
+			//0-3 front, 4-7 corresponding back-side
 			for(u32 j=0; j<8; j++)
 			{
 				video::S3DVertex vertices[4] =
@@ -804,6 +805,7 @@ void mapblock_mesh_generate_special(MeshMakeData *data,
 						ap.x0(), ap.y0()),
 				};
 
+				//0,0,90,90,180,180,270,270
 				for(u16 i=0; i<4; i++)
 					vertices[i].Pos.rotateXZBy(j/2*90);				
 
@@ -822,7 +824,7 @@ void mapblock_mesh_generate_special(MeshMakeData *data,
 					for(u16 i=0; i<4; i++)
 						vertices[i].Pos.X += offset;
 					break;
-				case  3:		
+				case 3:		
 					for(u16 i=0; i<4; i++)
 						vertices[i].Pos.X -= offset;
 				}
