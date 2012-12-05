@@ -134,10 +134,11 @@ enum NodeDrawType
 	NDT_ALLFACES_OPTIONAL, // Fancy -> allfaces, fast -> normal
 	NDT_TORCHLIKE,
 	NDT_SIGNLIKE,
-	NDT_PLANTLIKE,
+	NDT_PLANTLIKE, // diagonals
 	NDT_FENCELIKE,
 	NDT_RAILLIKE,
 	NDT_NODEBOX,
+	NDT_PLANTLIKE_SQUARE // square
 };
 
 #define CF_SPECIAL_COUNT 2

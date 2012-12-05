@@ -781,6 +781,61 @@ void mapblock_mesh_generate_special(MeshMakeData *data,
 				collector.append(tile, vertices, 4, indices, 6);
 			}
 		break;}
+		case NDT_PLANTLIKE_SQUARE:
+		{
+			TileSpec tile = getNodeTileN(n, p, 0, data);
+			tile.material_flags |= MATERIAL_FLAG_CRACK_OVERLAY;
+			AtlasPointer ap = tile.texture;
+			
+			u16 l = getInteriorLight(n, 1, data);
+			video::SColor c = MapBlock_LightColor(255, l, decode_light(f.light_source));
+
+			for(u32 j=0; j<8; j++)
+			{
+				video::S3DVertex vertices[4] =
+				{
+					video::S3DVertex(-BS/2,-BS/2,0,0,0,0, c,
+						ap.x0(), ap.y1()),
+					video::S3DVertex( BS/2,-BS/2,0,0,0,0, c,
+						ap.x1(), ap.y1()),
+					video::S3DVertex( BS/2, BS/2,0,  0,0,0, c,
+						ap.x1(), ap.y0()),
+					video::S3DVertex(-BS/2, BS/2,0,0,0,0, c,
+						ap.x0(), ap.y0()),
+				};
+
+				for(u16 i=0; i<4; i++)
+					vertices[i].Pos.rotateXZBy(j/2*90);				
+
+				float offset = 0.25*BS;
+
+				switch(j%4){
+				case 0:  
+					for(u16 i=0; i<4; i++)
+						vertices[i].Pos.Z += offset;
+					break;
+				case 1:	
+					for(u16 i=0; i<4; i++)
+						vertices[i].Pos.Z -= offset;
+					break;
+				case 2:	
+					for(u16 i=0; i<4; i++)
+						vertices[i].Pos.X += offset;
+					break;
+				case  3:		
+					for(u16 i=0; i<4; i++)
+						vertices[i].Pos.X -= offset;
+				}
+
+				for(u16 i=0; i<4; i++)
+					vertices[i].Pos += intToFloat(p,BS);
+
+
+				u16 indices[] = {0,1,2,2,3,0};
+				// Add to mesh collector
+				collector.append(tile, vertices, 4, indices, 6);
+			}
+		break;}
 		case NDT_FENCELIKE:
 		{
 			TileSpec tile = getNodeTile(n, p, v3s16(0,0,0), data);

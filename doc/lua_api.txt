@@ -296,7 +296,13 @@ Look for examples in games/minimal or games/minetest_game.
 - allfaces_optional
 - torchlike
 - signlike
-- plantlike
+- plantlike        -- draws on diagonals. from above, looks like:
+                      \/
+                      /\
+- plantlike_square -- draws on pairs of orthogonal planes. from above, looks like this:
+                     _|_|_
+                     _|_|_
+                      | |
 - fencelike
 - raillike
 - nodebox -- See below. EXPERIMENTAL

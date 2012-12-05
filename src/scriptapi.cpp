@@ -384,6 +384,7 @@ struct EnumString es_DrawType[] =
 	{NDT_FENCELIKE, "fencelike"},
 	{NDT_RAILLIKE, "raillike"},
 	{NDT_NODEBOX, "nodebox"},
+	{NDT_PLANTLIKE_SQUARE, "plantlike_square"},
 	{0, NULL},
 };
 
