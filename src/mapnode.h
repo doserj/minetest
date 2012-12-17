@@ -177,6 +177,10 @@ struct MapNode
 	u8 getWallMounted(INodeDefManager *nodemgr) const;
 	v3s16 getWallMountedDir(INodeDefManager *nodemgr) const;
 
+	u8 getConnectDirs(INodeDefManager *nodemgr) const;
+	std::vector<v3s16> getConnectDirsV(INodeDefManager *nodemgr) const;
+
+	
 	/*
 		Gets list of node boxes (used for rendering (NDT_NODEBOX)
 		and collision)

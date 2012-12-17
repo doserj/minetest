@@ -132,6 +132,30 @@ v3s16 MapNode::getWallMountedDir(INodeDefManager *nodemgr) const
 	}
 }
 
+u8 MapNode::getConnectDirs(INodeDefManager *nodemgr) const
+{
+	const ContentFeatures &f = nodemgr->get(*this);
+	if(f.param_type_2 == CPT2_CONNECTDIRS)
+		return getParam2() & 0x7f; //lower 6 bits, one for each dir
+	return 0;
+}
+
+std::vector<v3s16> MapNode::getConnectDirsV(INodeDefManager *nodemgr) const
+{
+	u8 connect_dirs = getConnectDirs(nodemgr);
+	std::vector<v3s16> dirsV;
+	v3s16 dirs[] = { v3s16(0,1,0), v3s16(0,-1,0), v3s16(1,0,0), 
+			 v3s16(-1,0,0), v3s16(0,0,1), v3s16(0,0,-1)};
+	for(int i=0; i<6; i++)
+	{
+		if(connect_dirs & (2^i))
+		{
+			dirsV.push_back(dirs[i]);
+		}
+	}
+	return dirsV;
+}
+
 static std::vector<aabb3f> transformNodeBox(const MapNode &n,
 		const NodeBox &nodebox, INodeDefManager *nodemgr)
 {
@@ -205,6 +229,50 @@ static std::vector<aabb3f> transformNodeBox(const MapNode &n,
 			box.addInternalPoint(vertices[1]);
 			boxes.push_back(box);
 		}
+	}
+	else if(nodebox.type == NODEBOX_CONNECTABLE)
+	{
+		boxes = nodebox.fixed;
+		const std::vector<aabb3f> &connector = nodebox.connector;
+		std::vector<v3s16> dirs = n.getConnectDirsV(nodemgr);
+		
+		for(std::vector<v3s16>::const_iterator dir_it = dirs.begin();
+		    dir_it != dirs.end(); ++dir_it) //put one connector in every dir
+		{
+			v3s16 dir = *dir_it;
+			for(std::vector<aabb3f>::const_iterator
+				it = connector.begin();
+				it != connector.end(); ++it)
+			{
+				aabb3f connectorbox = *it; 
+				v3f vertices[2] =
+				{
+					connectorbox.MinEdge,
+					connectorbox.MaxEdge
+				};
+
+				for(s32 i=0; i<2; i++)
+				{
+					if(dir == v3s16(-1,0,0))
+						vertices[i].rotateXZBy(0);
+					if(dir == v3s16(1,0,0))
+						vertices[i].rotateXZBy(180);
+					if(dir == v3s16(0,0,-1))
+						vertices[i].rotateXZBy(90);
+					if(dir == v3s16(0,0,1))
+						vertices[i].rotateXZBy(-90);
+					if(dir == v3s16(0,-1,0))
+						vertices[i].rotateYZBy(90);
+					if(dir == v3s16(0,1,0))
+						vertices[i].rotateYZBy(-90);
+				}
+
+				aabb3f box = aabb3f(vertices[0]);
+				box.addInternalPoint(vertices[1]);
+				boxes.push_back(box);
+			}
+		}
+
 	}
 	else // NODEBOX_REGULAR
 	{
