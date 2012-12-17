@@ -401,6 +401,7 @@ struct EnumString es_ContentParamType2[] =
 	{CPT2_FLOWINGLIQUID, "flowingliquid"},
 	{CPT2_FACEDIR, "facedir"},
 	{CPT2_WALLMOUNTED, "wallmounted"},
+	{CPT2_CONNECTDIRS, "connectdirs"},
 	{0, NULL},
 };
 
@@ -417,6 +418,7 @@ struct EnumString es_NodeBoxType[] =
 	{NODEBOX_REGULAR, "regular"},
 	{NODEBOX_FIXED, "fixed"},
 	{NODEBOX_WALLMOUNTED, "wallmounted"},
+	{NODEBOX_CONNECTABLE, "connectable"},
 	{0, NULL},
 };
 
@@ -659,6 +661,11 @@ static NodeBox read_nodebox(lua_State *L, int index)
 				es_NodeBoxType, NODEBOX_REGULAR);
 
 		lua_getfield(L, index, "fixed");
+		if(lua_istable(L, -1))
+			nodebox.fixed = read_aabb3f_vector(L, -1, BS);
+		lua_pop(L, 1);
+
+		lua_getfield(L, index, "connector");
 		if(lua_istable(L, -1))
 			nodebox.fixed = read_aabb3f_vector(L, -1, BS);
 		lua_pop(L, 1);

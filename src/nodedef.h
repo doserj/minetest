@@ -53,6 +53,8 @@ enum ContentParamType2
 	CPT2_FACEDIR,
 	// Direction for signs, torches and such
 	CPT2_WALLMOUNTED,
+	// directions for connectable nodeboxes (fences, pipes, etc)
+	CPT2_CONNECTDIRS,
 };
 
 enum LiquidType
@@ -67,6 +69,7 @@ enum NodeBoxType
 	NODEBOX_REGULAR, // Regular block; allows buildable_to
 	NODEBOX_FIXED, // Static separately defined box(es)
 	NODEBOX_WALLMOUNTED, // Box for wall mounted nodes; (top, bottom, side)
+	NODEBOX_CONNECTABLE //static boxes plus dynamic connector boxes that can go in any subset of the 6 directions.
 };
 
 struct NodeBox
@@ -75,6 +78,8 @@ struct NodeBox
 	// NODEBOX_REGULAR (no parameters)
 	// NODEBOX_FIXED
 	std::vector<aabb3f> fixed;
+	// NODEBOX_CONNECTABLE
+	std::vector<aabb3f> connector;
 	// NODEBOX_WALLMOUNTED
 	aabb3f wall_top;
 	aabb3f wall_bottom;

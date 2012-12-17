@@ -46,7 +46,7 @@ void NodeBox::reset()
 
 void NodeBox::serialize(std::ostream &os) const
 {
-	writeU8(os, 1); // version
+	writeU8(os, 2); // version
 	writeU8(os, type);
 
 	if(type == NODEBOX_FIXED)
@@ -69,12 +69,31 @@ void NodeBox::serialize(std::ostream &os) const
 		writeV3F1000(os, wall_side.MinEdge);
 		writeV3F1000(os, wall_side.MaxEdge);
 	}
+	else if(type == NODEBOX_CONNECTABLE)
+	{
+		writeU16(os, fixed.size());
+		for(std::vector<aabb3f>::const_iterator
+				i = fixed.begin();
+				i != fixed.end(); i++)
+		{
+			writeV3F1000(os, i->MinEdge);
+			writeV3F1000(os, i->MaxEdge);
+		}
+		writeU16(os, connector.size());
+		for(std::vector<aabb3f>::const_iterator
+				i = connector.begin();
+				i != connector.end(); i++)
+		{
+			writeV3F1000(os, i->MinEdge);
+			writeV3F1000(os, i->MaxEdge);
+		}		
+	}
 }
 
 void NodeBox::deSerialize(std::istream &is)
 {
 	int version = readU8(is);
-	if(version != 1)
+	if(version != 1 && version != 2) //can read both version 1 (without connectable) and version 2
 		throw SerializationError("unsupported NodeBox version");
 
 	reset();
@@ -100,6 +119,25 @@ void NodeBox::deSerialize(std::istream &is)
 		wall_bottom.MaxEdge = readV3F1000(is);
 		wall_side.MinEdge = readV3F1000(is);
 		wall_side.MaxEdge = readV3F1000(is);
+	}
+	else if(type == NODEBOX_CONNECTABLE)
+	{
+		u16 fixed_count = readU16(is);
+		while(fixed_count--)
+		{
+			aabb3f box;
+			box.MinEdge = readV3F1000(is);
+			box.MaxEdge = readV3F1000(is);
+			fixed.push_back(box);
+		}
+		u16 connector_count = readU16(is);
+		while(connector_count--)
+		{
+			aabb3f box;
+			box.MinEdge = readV3F1000(is);
+			box.MaxEdge = readV3F1000(is);
+			connector.push_back(box);
+		}
 	}
 }
 
