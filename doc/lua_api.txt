@@ -329,6 +329,16 @@ A nodebox is defined as any of:
     wall_bottom = box,
     wall_side = box
 }
+{
+    -- a fixed box (or boxes) that is always there plus a connector
+    -- that is shown for every direction this node "connects" to.
+    -- (connectdirs param2 is used to decribe which connectors are
+    --  present)
+    -- can be used for fences, pipes, etc
+    type = "connectable",
+    fixed = "box" OR {box1, box2, ...}
+    connector = box OR {box1, box2, ...}
+}
 
 A box is defined as:
   {x1, y1, z1, x2, y2, z2}
