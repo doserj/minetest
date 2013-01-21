@@ -159,15 +159,15 @@ void mapblock_mesh_generate_special(MeshMakeData *data,
 			/*
 				Add water sources to mesh if using new style
 			*/
-			TileSpec tile_liquid = f.special_tiles[0];
+			TileSpec tile_liquid = f.tiles[0];
 			AtlasPointer &pa_liquid = tile_liquid.texture;
-
-			bool top_is_air = false;
-			MapNode n = data->m_vmanip.getNodeNoEx(blockpos_nodes + v3s16(x,y+1,z));
-			if(n.getContent() == CONTENT_AIR)
-				top_is_air = true;
+			bool top_is_same_liquid = false;
+			MapNode n2 = data->m_vmanip.getNodeNoEx(blockpos_nodes + v3s16(x,y+1,z));
+			if(n.getContent() == n2.getContent() ||
+			   n2.getContent() == nodedef->getId(f.liquid_alternative_flowing))
+				top_is_same_liquid = true;
 			
-			if(top_is_air == false)
+			if(top_is_same_liquid)
 				continue;
 
 			u16 l = getInteriorLight(n, 0, data);
@@ -185,7 +185,7 @@ void mapblock_mesh_generate_special(MeshMakeData *data,
 						pa_liquid.x0(), pa_liquid.y0()),
 			};
 
-			v3f offset(p.X, p.Y + (-0.5+node_liquid_level)*BS, p.Z);
+			v3f offset(p.X*BS, (p.Y - 0.5 + node_liquid_level)*BS, p.Z*BS);
 			for(s32 i=0; i<4; i++)
 			{
 				vertices[i].Pos += offset;
