@@ -162,15 +162,20 @@ void mapblock_mesh_generate_special(MeshMakeData *data,
 			TileSpec tile_liquid = f.tiles[0];
 			AtlasPointer &pa_liquid = tile_liquid.texture;
 			bool top_is_same_liquid = false;
-			MapNode n2 = data->m_vmanip.getNodeNoEx(blockpos_nodes + v3s16(x,y+1,z));
-			if(n.getContent() == n2.getContent() ||
-			   n2.getContent() == nodedef->getId(f.liquid_alternative_flowing))
+			MapNode n_top = data->m_vmanip.getNodeNoEx(blockpos_nodes + v3s16(x,y+1,z));
+			if(n_top.getContent() == n.getContent() ||
+			   n_top.getContent() == nodedef->getId(f.liquid_alternative_flowing))
 				top_is_same_liquid = true;
 			
 			if(top_is_same_liquid)
 				continue;
 
-			u16 l = getInteriorLight(n, 0, data);
+			u16 l = 0;
+			if(nodedef->get(n_top).param_type == CPT_LIGHT)
+				l = getInteriorLight(n_top, 0, data);
+			else
+				l = getInteriorLight(n, 0, data);
+
 			video::SColor c = MapBlock_LightColor(f.alpha, l, decode_light(f.light_source));
 			
 			video::S3DVertex vertices[4] =
