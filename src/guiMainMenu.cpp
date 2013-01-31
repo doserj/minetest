@@ -898,6 +898,11 @@ bool GUIMainMenu::OnEvent(const SEvent& event)
 				regenerateGui(m_screensize_old);
 			return true;
 		}
+		if(event.GUIEvent.EventType == gui::EGET_CHECKBOX_CHANGED)
+		{
+			readInput(m_data);
+			return true;
+		}
 		if(event.GUIEvent.EventType==gui::EGET_BUTTON_CLICKED)
 		{
 			switch(event.GUIEvent.Caller->getID())
